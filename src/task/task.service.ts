@@ -1,26 +1,33 @@
 import { Injectable } from '@nestjs/common';
-import { CreateTaskDto } from './dto/create-task.dto';
-import { UpdateTaskDto } from './dto/update-task.dto';
+import { TaskDto } from 'src/task/task.dto';
 
 @Injectable()
 export class TaskService {
-  create(createTaskDto: CreateTaskDto) {
-    return 'This action adds a new task';
+  private TASKS = [
+    {
+      id: 1,
+      name: 'recordVideo',
+      isDone: false,
+    },
+  ];
+
+  getAll() {
+    return this.TASKS;
   }
 
-  findAll() {
-    return `This action returns all task`;
+  create(dto: TaskDto) {
+    this.TASKS.push({
+      id: this.TASKS.length,
+      ...dto,
+      isDone: false,
+    });
+    return this.TASKS;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} task`;
-  }
-
-  update(id: number, updateTaskDto: UpdateTaskDto) {
-    return `This action updates a #${id} task`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} task`;
+  toggleDone(id: string) {
+    const task = this.TASKS.find((el) => el.id === +id);
+    if (!task) return `There is no task with id ${id}`;
+    task.isDone = !task.isDone;
+    return task;
   }
 }

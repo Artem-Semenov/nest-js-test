@@ -1,34 +1,33 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Post,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common';
 import { TaskService } from './task.service';
-import { CreateTaskDto } from './dto/create-task.dto';
-import { UpdateTaskDto } from './dto/update-task.dto';
+import { TaskDto } from 'src/task/task.dto';
 
-@Controller('task')
+@Controller('tasks')
 export class TaskController {
   constructor(private readonly taskService: TaskService) {}
 
-  @Post()
-  create(@Body() createTaskDto: CreateTaskDto) {
-    return this.taskService.create(createTaskDto);
-  }
-
   @Get()
-  findAll() {
-    return this.taskService.findAll();
+  getTasks() {
+    return this.taskService.getAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.taskService.findOne(+id);
+  @Post()
+  @UsePipes(new ValidationPipe())
+  createTask(@Body() dto: TaskDto) {
+    return this.taskService.create(dto);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTaskDto: UpdateTaskDto) {
-    return this.taskService.update(+id, updateTaskDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.taskService.remove(+id);
+  toggleDone(@Param('id') id: string) {
+    return this.taskService.toggleDone(id);
   }
 }
